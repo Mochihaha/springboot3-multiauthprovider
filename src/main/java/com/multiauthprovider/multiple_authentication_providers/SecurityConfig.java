@@ -59,22 +59,6 @@ public class SecurityConfig {
 
     }
 
-//    @Bean
-//    public AuthenticationManager authenticationManager(
-//            PasswordEncoder passwordEncoder) {
-//        // in-memory authentication
-//        DaoAuthenticationProvider inMemoryAuthenticationProvider = new DaoAuthenticationProvider();
-//        UserDetails userDetails = User
-//                .withUsername("memuser")
-//                .password(passwordEncoder().encode("password"))
-//                .roles("USER")
-//                .build();
-//        inMemoryAuthenticationProvider.setUserDetailsService(new InMemoryUserDetailsManager(userDetails));
-//        inMemoryAuthenticationProvider.setPasswordEncoder(passwordEncoder);
-//
-//        return new ProviderManager(inMemoryAuthenticationProvider, new CustomPalindromeAuthenticationProvider());
-//    }
-
 
     @Bean
     public PasswordEncoder passwordEncoder() {
