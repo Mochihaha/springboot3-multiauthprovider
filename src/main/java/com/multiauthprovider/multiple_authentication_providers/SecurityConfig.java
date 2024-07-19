@@ -56,9 +56,7 @@ public class SecurityConfig {
         inMemoryAuthenticationProvider.setUserDetailsService(new InMemoryUserDetailsManager(userDetails));
         inMemoryAuthenticationProvider.setPasswordEncoder(passwordEncoder);
         return inMemoryAuthenticationProvider;
-
     }
-
 
     @Bean
     public PasswordEncoder passwordEncoder() {
