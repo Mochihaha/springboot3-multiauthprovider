@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -33,21 +34,31 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean
-    public AuthenticationManager authenticationManager(
-            PasswordEncoder passwordEncoder) {
-        // in-memory authentication
-        DaoAuthenticationProvider inMemoryAuthenticationProvider = new DaoAuthenticationProvider();
-        UserDetails userDetails = User
-                .withUsername("memuser")
-                .password(passwordEncoder().encode("password"))
-                .roles("USER")
-                .build();
-        inMemoryAuthenticationProvider.setUserDetailsService(new InMemoryUserDetailsManager(userDetails));
-        inMemoryAuthenticationProvider.setPasswordEncoder(passwordEncoder);
+    @Bean // no @Override because not extending another class
+    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
+        PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        AuthenticationManagerBuilder auth = http.getSharedObject(AuthenticationManagerBuilder.class); //Stackoverflow error
+        auth.inMemoryAuthentication()
+                .withUser("memuser")
+                .password(passwordEncoder.encode("password"))
+                .roles("USER");
 
-        return new ProviderManager(inMemoryAuthenticationProvider, new CustomPalindromeAuthenticationProvider());
+        auth.authenticationProvider(new CustomPalindromeAuthenticationProvider());
+        return auth.build();
     }
+
+//     Error creating authenticationManager bean (name of Spring beans follow the method name annotated with @Bean)
+//    @Bean // no @Override because not extending another class
+//    public AuthenticationManager authenticationManager(AuthenticationManagerBuilder auth) throws Exception { // Cannot apply these customisations to already built object
+//        PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+//        auth.inMemoryAuthentication()
+//                .withUser("memuser")
+//                .password(passwordEncoder.encode("password"))
+//                .roles("USER");
+//
+//        auth.authenticationProvider(new CustomPalindromeAuthenticationProvider());
+//        return auth.build();
+//    }
 
 
     @Bean
